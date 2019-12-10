@@ -5,6 +5,7 @@ build:
 	swift build -c release --disable-sandbox
 
 install: build
+        install -d "$(bindir)"
 	install ".build/release/xcodebuild-to-md" "$(bindir)"
 
 uninstall:
