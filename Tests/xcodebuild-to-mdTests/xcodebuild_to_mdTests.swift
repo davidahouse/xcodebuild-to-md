@@ -26,7 +26,7 @@ final class xcodebuild_to_mdTests: XCTestCase {
         let data = pipe.fileHandleForReading.readDataToEndOfFile()
         let output = String(data: data, encoding: .utf8)
 
-        XCTAssertEqual(output, "Hello, world!\n")
+        XCTAssertEqual(output, "-derivedDataFolder is required, unable to continue\n")
     }
 
     /// Returns path to the built products directory.
