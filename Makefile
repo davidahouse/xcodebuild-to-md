@@ -1,6 +1,5 @@
 prefix ?= /usr/local
-bindir = $(prefix)/bin
-libdir = $(prefix)/lib
+bindir = $(prefix)/bin/
 
 build:
 	swift build -c release --disable-sandbox
