@@ -9,7 +9,13 @@
 import Foundation
 import XCResultKit
 
+enum CompileFindingCategory {
+    case error
+    case warning
+}
+
 struct CompileFinding {
+    let category: CompileFindingCategory
     let type: String
     let message: String
     let column: Int
@@ -58,10 +64,10 @@ func gatherFindings(from resultKit: XCResultFile, path: String) -> [String: Comp
                         $0.message == error.message && $0.type == error.issueType
                     }
                     if existing.count == 0 {
-                        findings[fileName] = CompileFindings(fileName: fileName, findings: found.findings + [CompileFinding(type: error.issueType, message: error.message, column: column, line: line)])
+                        findings[fileName] = CompileFindings(fileName: fileName, findings: found.findings + [CompileFinding(category: .error, type: error.issueType, message: error.message, column: column, line: line)])
                     }
                 } else {
-                    findings[fileName] = CompileFindings(fileName: fileName, findings: [CompileFinding(type: error.issueType, message: error.message, column: column, line: line)])
+                    findings[fileName] = CompileFindings(fileName: fileName, findings: [CompileFinding(category: .error, type: error.issueType, message: error.message, column: column, line: line)])
                 }
             }
         }
@@ -93,10 +99,10 @@ func gatherFindings(from resultKit: XCResultFile, path: String) -> [String: Comp
                         $0.message == warning.message && $0.type == warning.issueType
                     }
                     if existing.count == 0 {
-                        findings[fileName] = CompileFindings(fileName: fileName, findings: found.findings + [CompileFinding(type: warning.issueType, message: warning.message, column: column, line: line)])
+                        findings[fileName] = CompileFindings(fileName: fileName, findings: found.findings + [CompileFinding(category: .warning, type: warning.issueType, message: warning.message, column: column, line: line)])
                     }
                 } else {
-                    findings[fileName] = CompileFindings(fileName: fileName, findings: [CompileFinding(type: warning.issueType, message: warning.message, column: column, line: line)])
+                    findings[fileName] = CompileFindings(fileName: fileName, findings: [CompileFinding(category: .warning, type: warning.issueType, message: warning.message, column: column, line: line)])
                 }
             }
         }
