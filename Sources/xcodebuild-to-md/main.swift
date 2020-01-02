@@ -29,7 +29,6 @@ let findings = gatherFindings(from: resultKit, path: path)
 // Now see if there are test summaries
 let testSummary = gatherTestSummary(from: resultKit)
 
-
 if (commandLine.output?.lowercased() == "summary") {
     summaryOutput(findings: findings, testSummary: testSummary)
 } else {

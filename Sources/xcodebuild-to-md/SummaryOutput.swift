@@ -18,9 +18,10 @@ func summaryOutput(findings: [String: CompileFindings], testSummary: TestSummary
     
     for (_, finding) in findings {
         for finding in finding.findings {
-            if finding.type == "Swift Compiler Error" {
+            switch finding.category {
+            case .error:
                 errors += 1
-            } else {
+            case .warning:
                 warnings += 1
             }
         }

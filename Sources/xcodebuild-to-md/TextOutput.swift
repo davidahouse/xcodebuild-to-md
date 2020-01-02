@@ -16,14 +16,14 @@ func textOutput(findings: [String: CompileFindings], testSummary: TestSummary, i
     var foundFindings = false
     for (fileName, finding) in findings {
         for finding in finding.findings {
-            if (finding.type == "Swift Compile Error") || (includeWarnings == true) {
+            if (finding.category == .error) || (includeWarnings == true) {
                 print("\(fileName) (\(finding.line):\(finding.column))")
                 print(" ")
                 print("```")
                 print(codeLine(from: fileName, line: finding.line))
                 print(String.init(repeating: " ", count: finding.column) + "^")
                 print("```")
-                if (finding.type == "Swift Compiler Error") {
+                if (finding.category == .error) {
                     print("> :heavy_exclamation_mark: \(finding.message)")
                 } else {
                     print("> :warning: \(finding.message)")
@@ -44,6 +44,7 @@ func textOutput(findings: [String: CompileFindings], testSummary: TestSummary, i
     print(" ")
     
     var foundFailedTests = false
+    var foundTests = 0
     for testClass in testSummary.details.classes {
         for testCase in testClass.testCases {
             if testCase.status == "Failure" {
@@ -54,11 +55,16 @@ func textOutput(findings: [String: CompileFindings], testSummary: TestSummary, i
                 print(" ")
                 foundFailedTests = true
             }
+            foundTests += 1
         }
     }
-    
-    if !foundFailedTests {
-        print("No failing tests, awesome!")
+
+    if foundTests > 0 {
+        if !foundFailedTests {
+            print("No failing tests, awesome!")
+        }
+    } else {
+        print("No tests found at all! Check for compile errors.")
     }
 }
 
