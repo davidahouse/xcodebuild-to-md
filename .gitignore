@@ -9,6 +9,7 @@ DerivedData/
 chute_output/
 releases/
 .env
+.swiftpm
 
 ## Various settings
 *.pbxuser
