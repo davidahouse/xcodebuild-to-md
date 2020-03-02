@@ -29,8 +29,14 @@ let findings = gatherFindings(from: resultKit, path: path)
 // Now see if there are test summaries
 let testSummary = gatherTestSummary(from: resultKit)
 
-if (commandLine.output?.lowercased() == "summary") {
-    summaryOutput(findings: findings, testSummary: testSummary)
+if let output = commandLine.output {
+    if (output.lowercased() == "summary") {
+        summaryOutput(findings: findings, testSummary: testSummary)
+    } else {
+        textOutput(findings: findings, testSummary: testSummary, includeWarnings: commandLine.includeWarnings)
+    }
 } else {
-    textOutput(findings: findings, testSummary: testSummary, includeWarnings: commandLine.includeWarnings)
+    if testSummary.allTests <= 0 {
+        exit(1)
+    }
 }
