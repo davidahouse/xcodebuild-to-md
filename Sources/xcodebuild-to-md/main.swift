@@ -17,6 +17,8 @@ guard let path = commandLine.derivedDataFolder else {
 
 
 let derivedData = DerivedData()
+derivedData.debug = commandLine.debug
+derivedData.root = commandLine.root
 derivedData.location = URL(fileURLWithPath: path)
 guard let resultKit = derivedData.recentResultFile() else {
     print("Unable to find XCResult file!")

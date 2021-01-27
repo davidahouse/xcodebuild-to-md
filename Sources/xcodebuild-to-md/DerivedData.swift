@@ -11,6 +11,8 @@ import XCResultKit
 
 class DerivedData {
     
+    var debug: Bool = false
+    var root: Bool = false
     var location: URL? {
         didSet {
             testResultFiles = self.findTestResultFiles()
@@ -20,6 +22,9 @@ class DerivedData {
     
     func recentResultFile() -> XCResultFile? {
         // TODO: eventually sort by date/time, but for now just pick one
+        if debug {
+            print("DEBUG: Picking first file from \(testResultFiles.count) found")
+        }
         if testResultFiles.count > 0 {
             return testResultFiles[testResultFiles.count - 1]
         } else {
@@ -27,106 +32,62 @@ class DerivedData {
         }
     }
     
-//    public func populateCurrentTestResult(testResult: CurrentTestResult, from url: URL) {
-//
-//        testResult.path = url
-//
-//        guard let invocation = getInvocationRecord(url) else {
-//            print("Unable to get invocation record, nothing else we can do")
-//            return
-//        }
-//        testResult.invocation = invocation
-//
-//        // Gather up any test run summaries
-//        var testRunSummaries: [ActionTestPlanRunSummary] = []
-//        for action in invocation.actions {
-//            if let testRef = action.actionResult.testsRef {
-//                if let runSummaries = getTestPlanRunSummaries(url, id: testRef.id) {
-//                    for summary in runSummaries.summaries {
-//                        testRunSummaries.append(summary)
-//                    }
-//                }
-//            }
-//        }
-//        testResult.testPlanRunSummaries = testRunSummaries
-//    }
-//
-//    private func getInvocationRecord(_ url: URL) -> ActionsInvocationRecord? {
-//
-//        // execute the command line to return us the xcresulttool output
-//        guard let getOutput = Execute.shell(command: ["-l", "-c", "xcrun xcresulttool get --path \(url.path) --format json"]) else {
-//            return nil
-//        }
-//
-//        print("get output:")
-//        print(getOutput)
-//
-//        do {
-//            guard let data = getOutput.data(using: .utf8) else {
-//                print("Unable to turn string into data, must not be a utf8 string")
-//                return nil
-//            }
-//
-//            guard let rootJSON = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String: AnyObject] else {
-//                print("Expecting top level dictionary but didn't find one")
-//                return nil
-//            }
-//
-//            let invocation = ActionsInvocationRecord(rootJSON)
-//            return invocation
-//        } catch {
-//            print("Error deserializing JSON: \(error)")
-//            return nil
-//        }
-//    }
-//
-//    private func getTestPlanRunSummaries(_ url: URL, id: String) -> ActionTestPlanRunSummaries? {
-//
-//        guard let getOutput = Execute.shell(command: ["-l", "-c", "xcrun xcresulttool get --path \(url.path) --id \(id) --format json"]) else {
-//            return nil
-//        }
-//
-//        print("get output:")
-//        print(getOutput)
-//
-//        do {
-//            guard let data = getOutput.data(using: .utf8) else {
-//                print("Unable to turn string into data, must not be a utf8 string")
-//                return nil
-//            }
-//
-//            guard let rootJSON = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String: AnyObject] else {
-//                print("Expecting top level dictionary but didn't find one")
-//                return nil
-//            }
-//
-//            let runSummaries = ActionTestPlanRunSummaries(rootJSON)
-//            return runSummaries
-//        } catch {
-//            print("Error deserializing JSON: \(error)")
-//            return nil
-//        }
-//    }
-    
     private func findTestResultFiles() -> [XCResultFile] {
         
         guard let location = location else {
+            if debug {
+                print("DEBUG: Derived Data Location was nil so unable to continue")
+            }
             return []
         }
         
-        guard let folders = try? FileManager.default.contentsOfDirectory(atPath: location.path) else {
-            return []
-        }
-
+        let folders: [String] = {
+            guard root == false else {
+                return [location.path]
+            }
+            
+            guard let folders = try? FileManager.default.contentsOfDirectory(atPath: location.path) else {
+                if debug {
+                    print("DEBUG: Error getting contents of derived data folder \(location.path)")
+                }
+                return []
+            }
+            return folders
+        }()
+        
         var found: [URL] = []
         for folder in folders {
-            let folderURL = location.appendingPathComponent(folder).appendingPathComponent("Logs").appendingPathComponent("Test")
+            let folderURL: URL = {
+                if root {
+                    return location.appendingPathComponent("Logs").appendingPathComponent("Test")
+                } else {
+                    return location.appendingPathComponent(folder).appendingPathComponent("Logs").appendingPathComponent("Test")
+                }
+            }()
             if FileManager.default.fileExists(atPath: folderURL.path, isDirectory: nil) {
                 if let allFiles = try? FileManager.default.contentsOfDirectory(atPath: folderURL.path) {
+                    if debug {
+                        print("DEBUG: found \(allFiles.count) files in the Logs/Test subfolder")
+                    }
                     found += allFiles.filter { $0.hasSuffix(".xcresult") }.map { folderURL.appendingPathComponent($0) }
+                } else {
+                    if debug {
+                        print("DEBUG: Error getting contents of Logs/Test folder")
+                    }
+                }
+            } else {
+                if debug {
+                    print("DEBUG: Unable to find Logs/Test subfolder at \(folderURL)")
                 }
             }
         }
+        
+        if debug {
+            for file in found {
+                print("DEBUG: Found \(file)")
+            }
+        }
+        
         return found.sorted { (lhs, rhs) -> Bool in
             lhs.lastPathComponent < rhs.lastPathComponent
         }.map { XCResultFile(url: $0) }
