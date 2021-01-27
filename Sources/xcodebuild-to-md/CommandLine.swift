@@ -13,6 +13,7 @@
 //      -repositoryURL          The URL for the repository
 //      -sha                    The sha of the code that was compiled
 //      -includeWarnings        If text output should include compiler warnings
+//      -debug                  Set to enable debug mode which will log out more details about the attempt
 import Foundation
 
 struct CommandLineArguments {
@@ -22,6 +23,8 @@ struct CommandLineArguments {
     let repositoryURL: String?
     let sha: String?
     let includeWarnings: Bool
+    let debug: Bool
+    let root: Bool
 
     init(arguments: [String] = CommandLine.arguments) {
 
@@ -34,6 +37,10 @@ struct CommandLineArguments {
             }
         }
 
+        for (index, value) in foundArguments {
+            print("\(index) \(value)")
+        }
+        
         derivedDataFolder = foundArguments["derivedDataFolder"]
         output = foundArguments["output"]
         repositoryURL = foundArguments["repositoryURL"]
@@ -43,6 +50,16 @@ struct CommandLineArguments {
         } else {
             includeWarnings = true
         }
+        if foundArguments["debug"]?.lowercased() == "true" || foundArguments["debug"]?.lowercased() == "yes" {
+            debug = true
+        } else {
+            debug = false
+        }
+        if foundArguments["root"]?.lowercased() == "true" || foundArguments["root"]?.lowercased() == "yes" {
+            root = true
+        } else {
+            root = false
+        }
     }
 
     func printInstructions() {
@@ -50,6 +67,8 @@ struct CommandLineArguments {
         instructions += " [-output <summary/text>]"
         instructions += " [-repositoryURL <url>]"
         instructions += " [-sha <string>]"
+        instructions += " [-debug true/false]"
+        instructions += " [-root true/false]"
         print(instructions)
     }
 }
