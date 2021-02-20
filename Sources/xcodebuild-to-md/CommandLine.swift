@@ -36,10 +36,6 @@ struct CommandLineArguments {
                 foundArguments[parameter] = arguments[index+1]
             }
         }
-
-        for (index, value) in foundArguments {
-            print("\(index) \(value)")
-        }
         
         derivedDataFolder = foundArguments["derivedDataFolder"]
         output = foundArguments["output"]
