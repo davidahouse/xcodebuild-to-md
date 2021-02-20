@@ -64,7 +64,7 @@ struct CommandLineArguments {
 
     func printInstructions() {
         var instructions = "Usage: xcodebuild-to-md -derivedDataFolder <path>"
-        instructions += " [-output <summary/text>]"
+        instructions += " [-output <summary/text/badges>]"
         instructions += " [-repositoryURL <url>]"
         instructions += " [-sha <string>]"
         instructions += " [-debug true/false]"

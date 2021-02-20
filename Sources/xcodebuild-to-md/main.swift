@@ -34,6 +34,8 @@ let testSummary = gatherTestSummary(from: resultKit)
 if let output = commandLine.output {
     if (output.lowercased() == "summary") {
         summaryOutput(findings: findings, testSummary: testSummary)
+    } else if (output.lowercased() == "badges" ) {
+        badgeOutput(findings: findings, testSummary: testSummary)
     } else {
         textOutput(findings: findings, testSummary: testSummary, includeWarnings: commandLine.includeWarnings)
     }
