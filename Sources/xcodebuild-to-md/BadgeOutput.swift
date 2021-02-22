@@ -32,8 +32,8 @@ func badgeOutput(findings: [String: CompileFindings], testSummary: TestSummary) 
     }
     
     print("- ![totaltests](https://img.shields.io/badge/Unit%20Test%20Count-\(testSummary.allTests)-informational)")
-    print("- ![successtests](https://img.shields.io/badge/Unit%20Test%20Count-\(testSummary.successTests)-success)")
-    print("- ![failedtests](https://img.shields.io/badge/Unit%20Test%20Count-\(testSummary.failedTests)-critical)")
+    print("- ![successtests](https://img.shields.io/badge/Unit%20Tests%20Successful-\(testSummary.successTests)-success)")
+    print("- ![failedtests](https://img.shields.io/badge/Unit%20Tests%20Failed-\(testSummary.failedTests)-critical)")
 
     if let coverage = testSummary.codeCoverage {
         let totalCoverage = Int(coverage.lineCoverage * 100.0)
