@@ -36,6 +36,9 @@ if let output = commandLine.output {
         summaryOutput(findings: findings, testSummary: testSummary)
     } else if (output.lowercased() == "badges" ) {
         badgeOutput(findings: findings, testSummary: testSummary)
+    } else if (output.lowercased() == "summary-with-slowest-tests" ) {
+        summaryOutput(findings: findings, testSummary: testSummary)
+        slowestTestsOutput(testSummary: testSummary, slowTestCount: 5)
     } else {
         textOutput(findings: findings, testSummary: testSummary, includeWarnings: commandLine.includeWarnings)
     }

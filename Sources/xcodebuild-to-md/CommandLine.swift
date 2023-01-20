@@ -3,7 +3,7 @@
 //  xcodebuild-to-md
 //
 //  Created by David House on 9/10/17.
-//  Copyright © 2017 David House. All rights reserved.
+//  Copyright © 2017-2023 David House. All rights reserved.
 //
 
 //
@@ -60,7 +60,7 @@ struct CommandLineArguments {
 
     func printInstructions() {
         var instructions = "Usage: xcodebuild-to-md -derivedDataFolder <path>"
-        instructions += " [-output <summary/text/badges>]"
+        instructions += " [-output <summary/text/badges/summary-with-slowest-tests>]"
         instructions += " [-repositoryURL <url>]"
         instructions += " [-sha <string>]"
         instructions += " [-debug true/false]"
