@@ -78,7 +78,23 @@ func gatherFindings(from resultKit: XCResultFile, path: String) -> [String: Comp
                 let locationParts = location.url.split(separator: "#")
                 let locationURL = URL(fileURLWithPath: String(locationParts[0]))
                 let fileName = locationURL.path.replacingOccurrences(of: path + "/", with: "").replacingOccurrences(of: "file:", with: "")
-                
+
+                // Make sure to filter out non-code files since they do not contain the correct number of locationParts
+                if locationURL.pathExtension == "xib" || locationURL.pathExtension == "storyboard" || locationURL.pathExtension == "xcassets" {
+                    #if DEBUG
+                    print("Skipping file that is not a code file. \(locationURL.lastPathComponent)")
+                    #endif
+                    continue
+                }
+
+                // Make sure to filter out any other files that could cause a crash below.
+                if locationParts.count == 1 {
+                    #if DEBUG
+                    print("Skipping file that does not have two components. \(locationURL.lastPathComponent)")
+                    #endif
+                    continue
+                }
+
                 let locationDetails = locationParts[1].split(separator: "&")
                 var column = 0
                 var line = 0
