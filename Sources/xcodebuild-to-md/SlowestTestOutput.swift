@@ -23,7 +23,7 @@ func slowestTestsOutput(
         return duration0 > duration1
     }
 
-    for test in testsSortedByDuration.prefix(upTo: slowTestCount) {
+    for test in testsSortedByDuration.prefix(upTo: min(slowTestCount, testsSortedByDuration.count)) {
         guard let duration = test.duration else { continue }
         print("|\(test.name ?? String("<no name test>"))|\(String(format: "%.02f", duration))|")
     }
